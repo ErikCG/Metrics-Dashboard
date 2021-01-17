@@ -1,21 +1,18 @@
 :github_url: https://github.com/SoftwareSystemsLaboratory/Metrics-Dashboard
 
+.. index:: architecture
+
 Architecture
 ============
 
-Table of Contents
------------------
-
-* :ref:`Overview <overview_link>`
-* :ref:`Main Pipeline <main_pipeline_link>`
-    * :ref:`GitHub API <github_api_link>`
-    * :ref:`Data Collection Tier <data_collection_tier_link>`
-    * :ref:`Calculations Tier <calculations_tier_link>`
-    * :ref:`Graph Tier <graph_tier_link>`
-* :ref:`Execution Pipeline <execution_pipeline_link>`
-    * :ref:`Execution Tier <execution_tier_link>`
+.. contents:: Table of Contents
+    :depth: 2
+    :local:
+    :backlinks: top
 
 .. _overview_link:
+
+.. index:: overview
 
 Overview
 --------
@@ -34,29 +31,16 @@ There are essentially three tiers to the dashboard that are built on top of each
 
 Each on of these tiers rightfully deserve their own subsection in order for a complete explanation as to what they do. However, in essence the:
 
-* :ref:`Data Collection Tier <data_collection_tier_link>` is responsible for accessing the GitHub API and collecting information on a specific repository such as its:
+* :ref:`Data Collection Tier <data_collection_tier_link>` is responsible for accessing the GitHub API and collecting information on a specific repository.
 
-    * Commits
-    * Issues
-    * Pull Requests
+* :ref:`Calculations Tier <calculations_tier_link>` is responsible for taking the information in the :doc:`SQLlite Database <projectTooling>` and performing math to generate software metrics.
 
-* :ref:`Calculations Tier <calculations_tier_link>` is responsible for taking the information in the :doc:`SQLlite Database <projectTooling>` and performing math to generate software metrics such as:
-
-    * :doc:`Issues per Unit of Time <userGuide>`
-    * :doc:`Commits per Unit of Time <userGuide>`
-    * :doc:`Defect Density <userGuide>`
-    * :doc:`Issue Spoilage <userGuide>`
-
-    This information is then stored back into the same :doc:`SQLlite Database <projectTooling>` with the data from the :ref:`Data Collection Tier <data_collection_tier_link>`.
-
-
-* :ref:`Graph Tier <graph_tier_link>` is responsible for accessing the :doc:`SQLlite Database <projectTooling>` table and graphing said values. As the metrics are calcualted for every day since the repository's creation, the graphs can allow for developers, project managers, and the public eye to monitor the health and growth of a project over time.
+* :ref:`Graph Tier <graph_tier_link>` is responsible for accessing the :doc:`SQLlite Database <projectTooling>` table and graphing said values. Since the metrics are calcualted for every day since the repository's creation, the graphs can allow for developers, project managers, and the public eye to monitor the health and growth of a project over time.
 
 * :ref:`Execution Tier <execution_tier_link>` is responsible for wrapping all of the previously mentioned tiers together. Furthermore, this tier is responsible for the parellization of tasks and transforming the user's input (that's :doc:`YOU <userGuide>`!) into data that the other tiers can utilize.
 
-That was the simple version of the architecture of the `SSL Metrics Dashboard <../index.html>`_. For more information about the each tier, as well as the pipline that is utilized to collect, calculate, and graph data, please read on.
-
 .. _main_pipeline_link:
+.. index:: main pipeline
 
 Main Pipeline
 -------------
@@ -68,6 +52,7 @@ Quite franly, the pipline is best described using a diagram. So please take a lo
 .. figure:: images/pipelineNoExecution.png
     :scale: 50%
     :alt: Pipeline for Metrics Dashboard without the :ref:`Execution Tier <execution_tier_link>`.
+    :align: center
 
     Pipeline for Metrics Dashboard without the Execution tier. :download:`Source <files/pipelineNoExecution.drawio>`
 
@@ -88,6 +73,7 @@ Unlike the second point, there is an actual bottleneck between the :ref:`Calcula
 This does not mean that every calculation needs to be completed before they are graphed. Rather, it means that each specific calculation must be completed before its specific graph(s) can be displayed. Thus, if one calculation is taking longer than another, that works. The completed calculation can be plotted and displayed.
 
 .. _github_api_link:
+.. index:: github api overview
 
 GitHub API
 ^^^^^^^^^^
@@ -118,6 +104,7 @@ This custom handler is able to:
 * Return the response headers from the afore mentioned GET call
 
 .. _data_collection_tier_link:
+.. index:: data collection tier
 
 Data Collection Tier
 ^^^^^^^^^^^^^^^^^^^^
@@ -138,10 +125,13 @@ Below is a diagram of how a :ref:`Data Collection Tier <data_collection_tier_lin
 .. figure:: images/dataCollectionTier.png
     :scale: 50%
     :alt: Pipeline for Metrics Dashboard :ref:`Data Collection Tier <data_collection_tier_link>`.
+    :align: center
+
 
     Pipeline for Metrics Dashboard :ref:`Data Collection Tier <data_collection_tier_link>`. :download:`Source <files/dataCollectionTier.drawio>`
 
 .. _calculations_tier_link:
+.. index:: calculations tier
 
 Calculations Tier
 ^^^^^^^^^^^^^^^^^
@@ -162,10 +152,12 @@ Below is a diagram of how a :ref:`Calculations Tier <calculations_tier_link>` mo
 .. figure:: images/calculationsTier.png
     :scale: 50%
     :alt: Pipeline for Metrics Dashboard :ref:`Calculations Tier <calculations_tier_link>`.
+    :align: center
 
     Pipeline for Metrics Dashboard :ref:`Calculations Tier <calculations_tier_link>`. :download:`Source <files/calculationsTier.drawio>`
 
 .. _graph_tier_link:
+.. index:: graph tier
 
 Graph Tier
 ^^^^^^^^^^
@@ -178,6 +170,7 @@ Graph Tier
 
 
 .. _execution_pipeline_link:
+.. index:: execution pipeline
 
 Execution Pipeline
 ------------------
@@ -189,6 +182,7 @@ Quite franly, the pipline is best described using a diagram. So please take a lo
 .. figure:: images/executionPipeline.png
     :scale: 50%
     :alt: :ref:`Execution Pipeline <execution_pipeline_link>`.
+    :align: center
 
     Execution Pipeline for Metrics Dashboard. :download:`Source <files/executionPipeline.drawio>`
 
@@ -206,6 +200,7 @@ The second point has both a technical and practical reason for being the way tha
 All tiers are ran sequentially, while all modules within a tier are ran in parell. This is because each tier is reliant upon the one before it to complete its task before it can begin its own. However, the individual modules do not need to interact with each other to accomplish the same task. They may all accomplish the same goal within in a modules, and may even do similar steps to achieve that goal, but they themselves are not reliant upon one another to achieve that goal.
 
 .. _execution_tier_link:
+.. index:: execution tier
 
 Execution Tier
 ^^^^^^^^^^^^^^

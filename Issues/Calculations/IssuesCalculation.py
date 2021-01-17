@@ -68,7 +68,10 @@ class Calculations:
         '''
         open_count = self.get_open_count(conn)
         closed_count = self.get_closed_count(conn)
-        ratio = round((closed_count/ open_count),2)
+        if open_count != 0:
+            ratio = round((closed_count/ open_count),2)
+        else: 
+            ratio = 'N/A'
         return ratio
 
     def get_closing_efficiency(self,conn: Connection) -> str:
@@ -78,7 +81,10 @@ class Calculations:
         '''
         total = self.get_total_issues(conn)
         closed_count = self.get_closed_count(conn)
-        closing_efficiency = round((closed_count / total),2)
+        if total != 0:
+            closing_efficiency = round((closed_count / total),2)
+        else: 
+            closing_efficiency = 'N/A'
         closing_efficiency_percent = closing_efficiency * 100
         result = str(closing_efficiency_percent) + "%"
         return result
@@ -93,7 +99,10 @@ class Calculations:
         cur.execute(query)
         result = cur.fetchall()
         days = [i[0] for i in result]
-        avg = round((sum(days) / len(days)),2)
+        if len(days) != 0:
+            avg = round((sum(days) / len(days)),2)
+        else: 
+            avg = 'N/A'
         cur.close()
         return avg
         

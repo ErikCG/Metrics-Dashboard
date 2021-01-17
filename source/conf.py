@@ -65,8 +65,8 @@ math_number_all = False
 
 # Options for HTML Output
 
-# html_theme = "sphinx_rtd_theme"
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
+# html_theme = "alabaster"  # Used for debugging RST calls
 html_theme_options = {
     "nosidebar": True,
     # "sidebarwidth"
@@ -83,12 +83,11 @@ html_theme_options = {
     "display_version": False,
     "prev_next_buttons_location": "None",
     "style_external_links": True,
-    # "vcs_pageview_mode": "blob",
     "style_nav_header_background": "maroon",
     # Sphinx_RTD_Theme TOCTREE Options
     # "collapse_navigation": True,
     # "sticky_navigation": True,
-    # "navigation_depth": 4,
+    "navigation_depth": 4,
     # "includehidden": True,
     "titles_only": True,
 }

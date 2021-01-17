@@ -1,4 +1,4 @@
-:github_url: https://github.com/SoftwareSystemsLaboratory/Metrics-Dashboard
+:github_url: https://github.com/SoftwareSystemsLaboratory/Metrics-Dashboard/blob/main/source/about/abstract.rst
 
 Abstract
 ========
