@@ -5,16 +5,16 @@ class Issues(Collector_3):
     """Handels data referring to issues. Inherits from Collector_3 class"""
 
     def insertData(self, dataset: dict) -> None:
-        """ Takes in data identifying commits and inserts it into the database.
-    
-        Iterates through the dataset and executes sql to insert required data into the database in a 
+        """Takes in data identifying commits and inserts it into the database.
+
+        Iterates through the dataset and executes sql to insert required data into the database in a
         for loop. Will ignore the data if it is duplicated.
 
         Parameters:
             dataset (dict): nested dictionary containing data to be inserted into database
-        
+
         Note:
-            dataset should include: id num, count, issue title, author name, assignees, labels, 
+            dataset should include: id num, count, issue title, author name, assignees, labels,
             creation date, update date, closed date.
 
         Returns:
@@ -26,7 +26,7 @@ class Issues(Collector_3):
         ) -> str:
             """Joins labels together into one string
 
-            Uses a for loop to take labels from dataset and append them to an array. 
+            Uses a for loop to take labels from dataset and append them to an array.
             Then uses .join() to join on the array to create one string and return.
 
             Paramaters:
@@ -35,7 +35,7 @@ class Issues(Collector_3):
             Returns:
                 str: string of labels joined together with ', '
             """
-            
+
             labelNames = []
             for label in dataset[index]["labels"]:
                 labelNames.append(label["name"])
@@ -73,7 +73,7 @@ class Issues(Collector_3):
             updatedAt = dataset[dataPoint]["updated_at"]
             closedAt = dataset[dataPoint]["closed_at"]
 
-            sql = "INSERT OR IGNORE INTO Issues (ID, Count, Title, Author, Assignees, Labels, State, Created_At, Updated_At, Closed_At) VALUES (?,?,?,?,?,?,?,?,?,?);"
+            sql = "INSERT OR IGNORE INTO Issues (ID, Count, Title, Author, Assignees, Labels, State, Created_At_Date, Updated_At_Date, Closed_At_Date) VALUES (?,?,?,?,?,?,?,?,?,?);"
 
             self.connection.executeSQL(
                 sql,

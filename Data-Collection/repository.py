@@ -5,14 +5,14 @@ class Repository(Collector_3):
     """Handels data referring to repositories. Inherits from Collector_3 class"""
 
     def insertData(self, dataset: dict) -> None:
-        """ Takes in data identifying commits and inserts it into the database.
-    
-        Iterates through the dataset and executes sql to insert required data into the database in a 
+        """Takes in data identifying commits and inserts it into the database.
+
+        Iterates through the dataset and executes sql to insert required data into the database in a
         for loop. Will ignore the data if it is duplicated.
 
         Parameters:
             dataset (dict): nested dictionary containing data to be inserted into database
-        
+
         Note:
             dataset should include: id num, repo name, owner name, private bool, fork bool, creation date
             update date, pushed date, size, num of forks, and num of open issues.
@@ -32,7 +32,7 @@ class Repository(Collector_3):
         forks = dataset["forks_count"]
         openIssues = dataset["open_issues_count"]
 
-        sql = "INSERT OR IGNORE INTO Repository (ID, Name, Owner, Private, Fork, Created_At, Updated_At, Pushed_At, Size, Forks, Open_Issues) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+        sql = "INSERT OR IGNORE INTO Repository (ID, Name, Owner, Private, Fork, Created_At_Date, Updated_At_Date, Pushed_At_Date, Size, Forks, Open_Issues) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
 
         self.connection.executeSQL(
             sql,

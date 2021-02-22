@@ -43,15 +43,15 @@ class DataCollection:
 
         commitsSQL = "CREATE TABLE Commits (ID INTEGER, Commit_SHA TEXT, Branch TEXT, Author TEXT, Commit_Date TEXT, Tree_SHA TEXT, Comment_Count INTEGER, PRIMARY KEY(ID))"
 
-        filesSQL = "CREATE TABLE Files (ID INTEGER, Commit_SHA TEXT, Branch TEXT, Filename TEXT, PRIMARY KEY(ID))"
+        filesSQL = "CREATE TABLE Files (ID INTEGER, Commit_SHA TEXT, Branch TEXT, File_Tree TEXT, Status TEXT, Raw_URL TEXT, Lines_Of_Code INTEGER, PRIMARY KEY(ID))"
 
-        forksSQL = "CREATE TABLE Forks (ID TEXT, Name TEXT, Owner TEXT, Created_At TEXT, Updated_At TEXT, Pushed_At TEXT, Size INTEGER, Forks INTEGER, Open_Issues INTEGER, PRIMARY KEY(ID))"
+        forksSQL = "CREATE TABLE Forks (ID TEXT, Name TEXT, Owner TEXT, Created_At_Date TEXT, Updated_At_Date TEXT, Pushed_At_Date TEXT, Size INTEGER, Forks INTEGER, Open_Issues INTEGER, PRIMARY KEY(ID))"
 
-        issuesSQL = "CREATE TABLE Issues (ID INTEGER, Count INTEGER, Title TEXT, Author TEXT, Assignees TEXT, Labels TEXT, State TEXT, Created_At TEXT, Updated_At TEXT, Closed_At TEXT, PRIMARY KEY(ID));"
+        issuesSQL = "CREATE TABLE Issues (ID INTEGER, Count INTEGER, Title TEXT, Author TEXT, Assignees TEXT, Labels TEXT, State TEXT, Created_At_Date TEXT, Updated_At_Date TEXT, Closed_At_Date TEXT, PRIMARY KEY(ID));"
 
         languagesSQL = "CREATE TABLE Languages (ID INTEGER, Language TEXT, Bytes_of_Code INTEGER, PRIMARY KEY(ID))"
 
-        repositorySQL = "CREATE TABLE Repository (ID INTEGER, Name TEXT, Owner TEXT, Private TEXT, Fork TEXT, Created_At TEXT, Updated_At TEXT, Pushed_At TEXT, Size INTEGER, Forks INTEGER, Open_Issues INTEGER, PRIMARY KEY(ID))"
+        repositorySQL = "CREATE TABLE Repository (ID INTEGER, Name TEXT, Owner TEXT, Private TEXT, Fork TEXT, Created_At_Date TEXT, Updated_At_Date TEXT, Pushed_At_Date TEXT, Size INTEGER, Forks INTEGER, Open_Issues INTEGER, PRIMARY KEY(ID))"
 
         self.dbConnector.executeSQL(sql=branchesSQL, commit=True)
         self.dbConnector.executeSQL(sql=commitsSQL, commit=True)
@@ -66,6 +66,10 @@ class DataCollection:
             data = collector.getData()
             collector.insertData(dataset=data[0])
             return collector.iterateNext(data[1])
+
+        def _scrapeData(collector) -> int or bool:
+            collector.insertData()
+            return 0
 
         def _showProgression(collector, maxIterations: int) -> None:
             for iteration in tqdm(
@@ -176,16 +180,15 @@ class DataCollection:
                 )
             )
             filesCollector = Files(
+                commitSHA=commit,
+                branch=branch,
                 dbConnection=self.dbConnector,
-                oauthToken=self.token,
+                id=filesID,
                 repository=self.repository,
                 username=self.username,
-                currentPage=commit,
-                id=filesID,
-                branch=branch,
-                url="https://api.github.com/repos/{}/{}/git/trees/{}?recursive=1",
+                url="https://github.com/{}/{}/commit/{}",
             )
-            _collectData(filesCollector)
+            _scrapeData(filesCollector)
             filesID = filesCollector.exportID()
 
 

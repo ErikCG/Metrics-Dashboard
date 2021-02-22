@@ -1,23 +1,25 @@
-from libs.collector import Collector_3
-
-# TODO: Try to reduce complexity with self.id and self.branch
+from libs.collector import Collector_CommitWebScraper
 
 
-class Files(Collector_3):
-    def insertData(self, dataset: dict) -> int:
-        for file in range(len(dataset["tree"])):
-            filename = dataset["tree"][file]["path"]
-            commitSHA = self.currentPage
+class Files(Collector_CommitWebScraper):
+    def insertData(self) -> int:
+        self.getPage()
 
-            sql = "INSERT OR IGNORE INTO Files (ID, Commit_SHA, Branch, Filename) VALUES (?,?,?,?)"
+        data = self.getData()
+
+        for info in data:
+            sql = "INSERT OR IGNORE INTO Files (ID, Commit_SHA, Branch, File_Tree, Status, Raw_URL, Lines_Of_Code) VALUES (?,?,?,?,?,?,?)"
 
             self.connection.executeSQL(
                 sql,
                 (
                     self.id,
-                    commitSHA,
+                    self.commitSHA,
                     self.branch,
-                    filename,
+                    info[0],
+                    info[1],
+                    info[2],
+                    self.getLOC(rawURL=info[2]),
                 ),
                 True,
             )

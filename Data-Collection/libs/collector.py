@@ -1,7 +1,12 @@
+from os import name
+from bs4.element import ResultSet, Tag
 from requests import Response
 
+from bs4 import BeautifulSoup
+import requests
+
 from libs.databaseConnector import DatabaseConnector
-from libs.githubConnector import GitHubConnector
+from libs.githubConnector import GitHubConnector, GitHubCommitWebScraper
 
 
 class Collector_4:
@@ -178,6 +183,87 @@ class Collector_3:
 
         self.currentPage += 1
         return self.githubConnection.parseResponseHeaders(responseHeaders)["Last-Page"]
+
+    def exportID(self) -> int:
+        """A getter method to return the current primary key of the working table in the database.
+
+        Returns:
+            int: The current primary key of the working table in the database.
+        """
+        return self.id
+
+
+class Collector_CommitWebScraper:
+    def __init__(
+        self,
+        commitSHA: str,
+        branch: str,
+        dbConnection: DatabaseConnector,
+        id: int,
+        repository: str,
+        username: str,
+        url: str,
+    ) -> None:
+        self.commitSHA = commitSHA
+        self.connection = dbConnection
+        self.branch = branch
+        self.githubConnection = GitHubCommitWebScraper()
+        self.id = id
+        self.repository = repository
+        self.soup: BeautifulSoup
+        self.username = username
+        self.url = lambda user, repo, commitSHA,: url.format(
+            user,
+            repo,
+            commitSHA,
+        )
+
+    def getPage(self) -> None:
+        self.soup = self.githubConnection.openConnection(
+            url=self.url(self.username, self.repository, self.commitSHA)
+        )
+
+    def getData(self) -> None:
+        def _scrapeData(className: str, change: str) -> list:
+            fileURL = (
+                lambda fileTree: "https://raw.githubusercontent.com/{}/{}/{}/{}".format(
+                    self.username, self.repository, self.commitSHA, fileTree
+                )
+            )
+
+            data = []
+            filesList: ResultSet = self.soup.find_all(
+                name="svg", attrs={"class": "{}".format(className)}
+            )
+
+            for tag in filesList:
+                sibling = tag.find_next_sibling(name="a")
+                data.append((sibling.text, change, fileURL(fileTree=sibling.text)))
+
+            return data
+
+        added = _scrapeData(className="octicon-diff-added", change="added")
+        modified = _scrapeData(className="octicon-diff-modified", change="modified")
+        removed = _scrapeData(className="octicon-diff-removed", change="removed")
+
+        return added + modified + removed
+
+    def getLOC(self, rawURL: str) -> int:
+        code = requests.get(url=rawURL).text
+        code = code.split("\n")
+
+        for index in range(len(code)):
+            try:
+                if code[index] == "":
+                    code.pop(index)
+                elif code[index].isspace():
+                    code.pop(index)
+                else:
+                    pass
+            except IndexError:
+                pass
+
+        return len(code)
 
     def exportID(self) -> int:
         """A getter method to return the current primary key of the working table in the database.
